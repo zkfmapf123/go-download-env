@@ -24,8 +24,13 @@ var (
 			
 			awsParams := aws.MustNewAWS()
 			
-			fmt.Printf("profile: %s\n", awsParams.Profile)
-			fmt.Printf("region: %s\n", awsParams.Region)
+			fmt.Printf("profile: %s\n", awsParams.GetProfile())
+			fmt.Printf("region: %s\n", awsParams.GetRegion())
+
+			_, err := awsParams.GetParameter()
+			if err != nil {
+				panic(err)
+			}
 		},
 	}
 )

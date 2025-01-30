@@ -1,21 +1,21 @@
 package cmd
 
-import (
-	"fmt"
+// import (
+// 	"fmt"
 
-	"github.com/spf13/cobra"
-)
+// 	"github.com/spf13/cobra"
+// )
 
-var (
-	insertCmd = &cobra.Command{
-		Use: "insert",
-		Short: "insert is a command for inserting AWS credentials",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("insert")
-		},
-	}
-)
+// var (
+// 	insertCmd = &cobra.Command{
+// 		Use: "insert",
+// 		Short: "insert is a command for inserting AWS credentials",
+// 		Run: func(cmd *cobra.Command, args []string) {
+// 			fmt.Println("insert")
+// 		},
+// 	}
+// )
 
-func init() {
-	rootCmd.AddCommand(insertCmd)
-}
+// func init() {
+// 	rootCmd.AddCommand(insertCmd)
+// }

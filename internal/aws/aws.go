@@ -14,8 +14,8 @@ type AWSEnvParmas struct {
 	ssmParameterClient *ssm.Client
 	secretManagerClient *secretsmanager.Client
 	
-	Profile string
-	Region string
+	profile string
+	region string
 }
 
 func MustNewAWS() AWSEnvParmas {
@@ -35,7 +35,16 @@ func MustNewAWS() AWSEnvParmas {
 	return AWSEnvParmas{
 		ssmParameterClient: ssm.NewFromConfig(cfg),
 		secretManagerClient: secretsmanager.NewFromConfig(cfg),
-		Profile : profile,
-		Region : region,
+		profile: profile,
+		region: region,
 	}
 }
+
+func (a *AWSEnvParmas) GetProfile() string {
+	return a.profile
+}
+
+func (a *AWSEnvParmas) GetRegion() string {
+	return a.region
+}
+

@@ -1,21 +1,21 @@
 package cmd
 
-import (
-	"fmt"
+// import (
+// 	"fmt"
 
-	"github.com/spf13/cobra"
-)
+// 	"github.com/spf13/cobra"
+// )
 
-var (
-	deleteCmd = &cobra.Command{
-		Use: "delete",
-		Short: "delete is a command for deleting AWS credentials",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("delete")
-		},
-	}
-)
+// var (
+// 	deleteCmd = &cobra.Command{
+// 		Use: "delete",
+// 		Short: "delete is a command for deleting AWS credentials",
+// 		Run: func(cmd *cobra.Command, args []string) {
+// 			fmt.Println("delete")
+// 		},
+// 	}
+// )
 
-func init() {
-	rootCmd.AddCommand(deleteCmd)
-}
+// func init() {
+// 	rootCmd.AddCommand(deleteCmd)
+// }
