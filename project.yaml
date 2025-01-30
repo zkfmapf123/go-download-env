@@ -1,0 +1,12 @@
+envs:
+  - dev
+  - stg
+  - prd
+
+projects:
+  - core
+  - web
+  - api
+  - admin
+  - backend
+  - frontend

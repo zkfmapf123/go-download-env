@@ -47,9 +47,9 @@ func SelectMultipleBox(msg string, list []string) []string {
 	return answer
 }
 
-func PressEnter() string {
+func PressEnter(text string) string {
 	prompt := &survey.Input{
-		Message: "Press Enter the Back",
+		Message: text,
 	}
 
 	var answer string

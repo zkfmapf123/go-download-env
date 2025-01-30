@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zkfmapf123/go-download-env/internal/aws"
+	"github.com/zkfmapf123/go-download-env/internal/filesystem"
 	"github.com/zkfmapf123/go-download-env/internal/interaction"
 )
 
@@ -21,12 +21,12 @@ var (
 		Short: "go-envs is a tool for managing AWS credentials",
 		Run: func(cmd *cobra.Command, args []string) {
 			interaction.Clear()
+			fs := filesystem.NewFS()
 			
 			awsParams := aws.MustNewAWS()
 			
-			fmt.Printf("profile: %s\n", awsParams.GetProfile())
-			fmt.Printf("region: %s\n", awsParams.GetRegion())
-
+			fs.Dashboard([]string{"profile", "region", "role"}, [][]string{{awsParams.GetProfile(), awsParams.GetRegion(), awsParams.GetRole()}})
+			
 			_, err := awsParams.GetParameter()
 			if err != nil {
 				panic(err)

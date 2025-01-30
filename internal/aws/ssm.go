@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
@@ -16,10 +15,8 @@ const (
 )
 
 type EnvParameterValues struct {
-	Teams []string `json:"teams"`
-
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	Envs []string `json:"envs"`
+	Projects []string `json:"projects"`
 }
 
 func (a *AWSEnvParmas) GetParameter() (EnvParameterValues, error) {
@@ -33,7 +30,12 @@ func (a *AWSEnvParmas) GetParameter() (EnvParameterValues, error) {
 		// Create
 		if strings.Contains(err.Error(), "ParameterNotFound") {
 	
-			if err = a.createParameter(); err != nil {
+			envValues := EnvParameterValues{
+				Envs: []string{},
+				Projects: []string{},
+			}
+
+			if err = a.CreateParameter(envValues); err != nil {
 				return EnvParameterValues{} ,err
 			}
 	
@@ -46,17 +48,12 @@ func (a *AWSEnvParmas) GetParameter() (EnvParameterValues, error) {
 	return mustStirngToJson(*resp.Parameter.Value), nil
 }
 
-func (a *AWSEnvParmas) createParameter() error {
+func (a *AWSEnvParmas) CreateParameter(envValue EnvParameterValues) error {
 	
-	envValues := EnvParameterValues{
-		Teams: []string{},
-		CreatedAt: time.Now().Format(time.RFC3339),
-		UpdatedAt: time.Now().Format(time.RFC3339),
-	}
 
 	_, err := a.ssmParameterClient.PutParameter(context.TODO(), &ssm.PutParameterInput{
 		Name: aws.String(KEY),
-		Value: aws.String(mustJsonToString(envValues)),
+		Value: aws.String(mustJsonToString(envValue)),
 		DataType: aws.String("text"),
 		Description: aws.String("Environment Settings"),
 		Overwrite: aws.Bool(true),
