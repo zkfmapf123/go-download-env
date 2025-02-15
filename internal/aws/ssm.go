@@ -3,7 +3,6 @@ package aws
 import (
 	"context"
 	"encoding/json"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
@@ -21,39 +20,40 @@ type EnvParameterValues struct {
 
 func (a *AWSEnvParmas) GetParameter() (EnvParameterValues, error) {
 
-	resp, err := a.ssmParameterClient.GetParameter(context.TODO(), &ssm.GetParameterInput{
-		Name: aws.String(KEY),
-	})
+	// resp, err := a.ssmParameterClient.GetParameter(context.TODO(), &ssm.GetParameterInput{
+	// 	Name: aws.String(KEY),
+	// })
 
-	if err != nil {
+	// if err != nil {
 
-		// Create
-		if strings.Contains(err.Error(), "ParameterNotFound") {
+	// 	// Create
+	// 	if strings.Contains(err.Error(), "ParameterNotFound") {
 	
-			envValues := EnvParameterValues{
-				Envs: []string{},
-				Projects: []string{},
-			}
+	// 		envValues := EnvParameterValues{
+	// 			Envs: []string{},
+	// 			Projects: []string{},
+	// 		}
 
-			if err = a.CreateParameter(envValues); err != nil {
-				return EnvParameterValues{} ,err
-			}
+	// 		if err = a.CreateParameter(envValues); err != nil {
+	// 			return EnvParameterValues{} ,err
+	// 		}
 	
-			return EnvParameterValues{}, nil
-		}
+	// 		return EnvParameterValues{}, nil
+	// 	}
 		
-		return EnvParameterValues{}, err
-	}
+	// 	return EnvParameterValues{}, err
+	// }
 
-	return mustStirngToJson(*resp.Parameter.Value), nil
+	// return mustStirngToJson(*resp.Parameter.Value), nil
+	return EnvParameterValues{}, nil
 }
 
-func (a *AWSEnvParmas) CreateParameter(envValue EnvParameterValues) error {
+func (a *AWSEnvParmas) CreateParameter(key string, value string) error {
 	
 
 	_, err := a.ssmParameterClient.PutParameter(context.TODO(), &ssm.PutParameterInput{
-		Name: aws.String(KEY),
-		Value: aws.String(mustJsonToString(envValue)),
+		Name: aws.String(key),
+		Value: aws.String(value),
 		DataType: aws.String("text"),
 		Description: aws.String("Environment Settings"),
 		Overwrite: aws.Bool(true),

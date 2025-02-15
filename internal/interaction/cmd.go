@@ -47,6 +47,20 @@ func SelectMultipleBox(msg string, list []string) []string {
 	return answer
 }
 
+func InputText(msg string) string {
+	prompt := &survey.Input{
+		Message: msg,
+	}
+
+	var answer string
+	err := survey.AskOne(prompt, &answer, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	
+	return answer
+}
+
 func PressEnter(text string) string {
 	prompt := &survey.Input{
 		Message: text,

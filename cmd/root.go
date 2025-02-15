@@ -24,17 +24,18 @@ var (
 			fs := filesystem.NewFS()
 			
 			awsParams := aws.MustNewAWS()
+			_, isExist := awsParams.IsExistBucket()
 
-			if !awsParams.IsExistBucket() {
+			if !isExist {
 				log.Fatalf("%s bucket is not exist", awsParams.GetS3Bucket())
 			}
 
 			fs.Dashboard([]string{"profile", "region", "role", "s3-bucket"}, [][]string{{awsParams.GetProfile(), awsParams.GetRegion(), awsParams.GetRole(), awsParams.GetS3Bucket()}})
 			
-			_, err := awsParams.GetParameter()
-			if err != nil {
-				panic(err)
-			}
+			// _, err := awsParams.GetParameter()
+			// if err != nil {
+			// 	panic(err)
+			// }
 		},
 	}
 )

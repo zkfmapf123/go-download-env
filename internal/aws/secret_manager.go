@@ -2,7 +2,6 @@ package aws
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
 
@@ -29,35 +28,33 @@ func (a *AWSEnvParmas) CreateSecretManager(name string) error {
 	return nil
 }
 
-func (a *AWSEnvParmas) PutSecretManager(key, value, env, project string) error{
-	err := a.GetSecretManager(fmt.Sprintf("%s-%s", env, project))
+func (a *AWSEnvParmas) PutSecretManager(key, value string) error {
 
-	// 리소스가 없다면 생성
-	if err != nil {
-		fmt.Println(err.Error())
+    // 1. 먼저 시크릿이 존재하는지 확인
+    _, err := a.secretManagerClient.GetSecretValue(context.TODO(), &secretsmanager.GetSecretValueInput{
+        SecretId: aws.String(key),
+    })
 
-		if strings.Contains(err.Error(), "ResourceNotFoundException") {
-			err := a.CreateSecretManager(fmt.Sprintf("%s-%s", env, project))
-			if err != nil {
-				return err
-			}
-		}else {
-			return err
-		}
-	}
-	
-	// put key, value 
-	_ ,err = a.secretManagerClient.PutSecretValue(context.TODO(), &secretsmanager.PutSecretValueInput{
-		SecretId: aws.String(fmt.Sprintf("%s-%s", env, project)),
-		SecretString: aws.String(fmt.Sprintf("%s=%s", key, value)),
-	})
+    if err != nil {
+        // 시크릿이 없으면 생성
+        if strings.Contains(err.Error(), "ResourceNotFoundException") {
+            _, err = a.secretManagerClient.CreateSecret(context.TODO(), &secretsmanager.CreateSecretInput{
+                Name:         aws.String(key),
+                SecretString: aws.String(value),
+            })
 
-	if err != nil {
-		return err
-	}
+            return err
+        }
+        return err
+    }
 
-	return nil
-}	
+    _, err = a.secretManagerClient.PutSecretValue(context.TODO(), &secretsmanager.PutSecretValueInput{
+        SecretId:     aws.String(key),
+        SecretString: aws.String(value),
+    })
+
+    return err
+}
 
 func (a *AWSEnvParmas) DeleteSecretManager(name string, key string) {
 

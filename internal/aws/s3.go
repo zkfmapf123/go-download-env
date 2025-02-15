@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"sync"
@@ -10,20 +11,21 @@ import (
 	"github.com/zkfmapf123/go-download-env/internal/filesystem"
 )
 
-func (a *AWSEnvParmas) IsExistBucket() bool {
-	_, err :=a.s3Client.ListObjectsV2(
+func (a *AWSEnvParmas) IsExistBucket() (*s3.ListObjectsV2Output, bool) {
+	obj, err :=a.s3Client.ListObjectsV2(
 		context.TODO(),
 		&s3.ListObjectsV2Input{
 			Bucket: aws.String(a.GetS3Bucket()),
 		},
 	)
 
-	return err == nil
+	return obj, err == nil
 }
+
 
 func (a *AWSEnvParmas) UpdateS3Architecture(value filesystem.ProjectSettingParams) error {
 
-	isExist := a.IsExistBucket()
+	_, isExist := a.IsExistBucket()
 	if !isExist {
 		return fmt.Errorf("%s bucket is not exist", a.GetS3Bucket())
 	}
@@ -95,6 +97,16 @@ func (a *AWSEnvParmas) createFolders(pjtFolder, task, env string) error {
 	_, err := a.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
 		Bucket: aws.String(a.GetS3Bucket()),
 		Key: aws.String(fmt.Sprintf("%s/%s/%s/", pjtFolder, task, env)),
+	})
+
+	return err
+}
+
+func (a *AWSEnvParmas) PutObject(path, key, value string ) error {
+	_, err := a.s3Client.PutObject(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String(a.GetS3Bucket()),
+		Key: aws.String(fmt.Sprintf("%s/%s", path, key)),
+		Body: bytes.NewReader([]byte(value)),
 	})
 
 	return err
