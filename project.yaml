@@ -1,12 +1,22 @@
+## use common layer
+is_use_common_environment: true
+
+## env
 envs:
   - dev
   - stg
   - prd
 
+## projects
 projects:
-  - core
-  - web
-  - api
-  - admin
-  - backend
-  - frontend
+  front:
+    - web
+    - webview
+    - mobile
+  backend:
+    - core
+    - api
+  devops:
+    - idp
+    - backstage
+  blanks:

@@ -15,7 +15,8 @@ const (
 
 type ProjectSettingParams struct {
 	Envs []string `yaml:"envs"`
-	Projects []string `yaml:"projects"`
+	Projects map[string][]string `yaml:"projects"`
+	IsUseCommonEnvironments bool `yaml:"is_use_common_environment"`
 }
 
 func GetCurrentPath() string {

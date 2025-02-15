@@ -16,22 +16,34 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			interaction.Clear()
 			awsParams := aws.MustNewAWS()
+			fs := filesystem.NewFS()
 
 			projectSchema, err := filesystem.GetYamlFileData()
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			envParameter := aws.EnvParameterValues{
-				Envs: projectSchema.Envs,
-				Projects: projectSchema.Projects,
-			}
-
-			err = awsParams.CreateParameter(envParameter)
+			err = awsParams.UpdateS3Architecture(projectSchema)
 			if err != nil {
 				panic(err)
 			}
 
+			headers := []string{"team", "project", "env"}
+			body := [][]string{}
+
+			if projectSchema.IsUseCommonEnvironments {
+				body = append(body, []string{"common"})
+			}
+
+			for team, value := range projectSchema.Projects {
+				for _, project := range value {
+					for _, env := range projectSchema.Envs {
+						body = append(body, []string{team, project, env})
+					}
+				}
+			}
+
+			fs.Dashboard(headers, body)
 			interaction.PressEnter("Success Setting > Press Enter")
 		},
 	}

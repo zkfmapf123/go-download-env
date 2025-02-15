@@ -16,4 +16,4 @@ _build: clear
 
 dev-run: lint 
 	make _build
-	./main
+	./main -s3=test-bucket

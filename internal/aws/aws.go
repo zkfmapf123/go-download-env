@@ -6,6 +6,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
@@ -17,15 +18,17 @@ type AWSEnvParmas struct {
 	secretManagerClient *secretsmanager.Client
 	iamClient *iam.Client
 	stsClient *sts.Client
+	s3Client *s3.Client
 	
 	profile string
 	region string
 	role string // admin, developer, readonly
+	s3Bucket string 
 }
 
 func MustNewAWS() AWSEnvParmas {
 	
-	profile, region := viper.GetString("profile"), viper.GetString("region")
+	profile, region, s3Bucket := viper.GetString("profile"), viper.GetString("region"), viper.GetString("s3")
 	
 	cfg,err := config.LoadDefaultConfig(
 		context.TODO(),
@@ -42,8 +45,10 @@ func MustNewAWS() AWSEnvParmas {
 		secretManagerClient: secretsmanager.NewFromConfig(cfg),
 		iamClient: iam.NewFromConfig(cfg),
 		stsClient: sts.NewFromConfig(cfg),
+		s3Client: s3.NewFromConfig(cfg),
 		profile: profile,
 		region: region,
+		s3Bucket: s3Bucket,
 	}
 
 	role, err := awsConfig.GetUser()
@@ -52,7 +57,6 @@ func MustNewAWS() AWSEnvParmas {
 	}
 
 	awsConfig.role = role
-
 	return awsConfig
 }
 
@@ -64,10 +68,16 @@ func (a *AWSEnvParmas) GetRegion() string {
 	return a.region
 }
 
+func (a *AWSEnvParmas) GetS3Bucket() string {
+	return a.s3Bucket
+}
+
+// 추후 활용할 예정
 func (a *AWSEnvParmas) GetRole() string {
 	return a.role
 }
 
+// 추후 활용할 예정
 func (a *AWSEnvParmas) FatalErrorDeveloper() {
 
 	if a.role == "developer" {

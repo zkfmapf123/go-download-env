@@ -24,8 +24,12 @@ var (
 			fs := filesystem.NewFS()
 			
 			awsParams := aws.MustNewAWS()
-			
-			fs.Dashboard([]string{"profile", "region", "role"}, [][]string{{awsParams.GetProfile(), awsParams.GetRegion(), awsParams.GetRole()}})
+
+			if !awsParams.IsExistBucket() {
+				log.Fatalf("%s bucket is not exist", awsParams.GetS3Bucket())
+			}
+
+			fs.Dashboard([]string{"profile", "region", "role", "s3-bucket"}, [][]string{{awsParams.GetProfile(), awsParams.GetRegion(), awsParams.GetRole(), awsParams.GetS3Bucket()}})
 			
 			_, err := awsParams.GetParameter()
 			if err != nil {
@@ -48,6 +52,7 @@ func initial() {
 		}
 	})
 
+	rootCmd.PersistentFlags().StringP("s3", "s", "", "[Required] S3 bucket name")
 	rootCmd.PersistentFlags().StringP("profile", "p", _defaultProfile, "[Optional] AWS profile name")
 	rootCmd.PersistentFlags().StringP("region", "r", _defaultRegion, "[Optional] AWS region")
 
@@ -58,7 +63,12 @@ func initial() {
 
 	err = viper.BindPFlag("region", rootCmd.PersistentFlags().Lookup("region"))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
+	}
+
+	err = viper.BindPFlag("s3", rootCmd.PersistentFlags().Lookup("s3"))
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
 
