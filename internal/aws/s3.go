@@ -22,6 +22,15 @@ func (a *AWSEnvParmas) IsExistBucket() (*s3.ListObjectsV2Output, bool) {
 	return obj, err == nil
 }
 
+func (a *AWSEnvParmas) GetObjectValue(key string) (*s3.GetObjectOutput, error) {
+	obj, err := a.s3Client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: aws.String(a.GetS3Bucket()),
+		Key: aws.String(key),
+	})
+
+	return obj, err
+}
+
 
 func (a *AWSEnvParmas) UpdateS3Architecture(value filesystem.ProjectSettingParams) error {
 

@@ -88,12 +88,14 @@ var (
 )
 
 func MustUpdateTask(awsParams aws.AWSEnvParmas,fullPath, key, value string) {
-	err := awsParams.PutObject(fullPath, key, value)
+	ssmfullPath := fmt.Sprintf("/%s/%s", fullPath, key)
+	
+	err := awsParams.PutObject(fullPath, key, ssmfullPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = awsParams.CreateParameter(fmt.Sprintf("/%s/%s", fullPath, key), value)
+	err = awsParams.CreateParameter(ssmfullPath, value)
 	if err != nil {
 		log.Fatalln(err)
 	}

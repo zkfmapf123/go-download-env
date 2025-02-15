@@ -10,5 +10,6 @@
 ## Functions
 
 - [x] settings s3 store (project.yaml)
-- [ ] insert s3 -> ssm parameter store
+- [x] insert s3 -> ssm parameter store
+- [ ] preview / download environment
 - [ ] sync s3 -> ssm parameter
